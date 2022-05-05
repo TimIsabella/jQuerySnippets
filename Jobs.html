@@ -1,0 +1,395 @@
+   <!DOCTYPE html>
+   <html lang="en">
+   <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="referrer" content="unsafe-url" />
+        <script src="https://unpkg.com/axios@0.19.2/dist/axios.min.js"></script>
+        
+        <script src="../jobsService.js"></script>
+
+        <!--/////////////////////////////////////////////////////////////////////////////////////////////-->
+        
+        <style>
+
+          .upper-container{
+           margin-top: 4px;
+           margin-bottom: 11px;
+           margin-left: 14px;
+           margin-right: 14px;
+
+           display: inline-block;
+          }
+
+          .search-input[type=text]{
+           margin-top: 11px;
+           margin-bottom: 0px;
+           margin-left: 6px;
+           margin-right: 0px;
+           
+           padding-top: 0px;
+           padding-bottom: 11px;
+           padding-left: 5px;
+           padding-right: 0px;
+
+           border: 2px solid #ccc;
+           border-radius: 6px;
+
+           width: 188px;
+
+           font-size: 22px;
+           
+           background-color: white;
+           
+           -webkit-transition: width 0.4s ease-in-out;
+           transition: width 0.4s ease-in-out;
+          }
+
+          .search-input[type=text]:focus{
+           width: 555px;
+          }
+
+          .search-submit{
+           padding-top: 11px;
+           padding-bottom: 11px;
+           padding-left: 11px;
+           padding-right: 11px;
+           
+           background-color: #afd6e9;
+          }
+
+          .new-job-submit{
+           margin-left: 6px;
+           
+           padding-top: 11px;
+           padding-bottom: 11px;
+           padding-left: 11px;
+           padding-right: 11px;
+           
+           background-color: #afd6e9;
+          }
+
+          .lower-container{
+           margin-top: 0px;
+           margin-left: 28px;
+           display: flex;
+          }
+          
+          .column{
+           float: left;
+           width: 25%;
+          }
+          
+          .row:after{
+           content: "";
+           display: table;
+           clear: both;
+          }
+          
+          .loaded-cards-container{
+           flex-grow: 1;
+          }
+          
+          .card-entity{
+           margin-top: 0px;
+           margin-bottom: 22px;
+           margin-left: 0px;
+           margin-right: 22px;
+           
+           padding-top: 0px;
+           padding-bottom: 22px;
+           padding-left: 0px;
+           padding-right: 0px;
+           
+           outline: solid;
+           outline-width: 1px;
+           outline-offset: 0px;
+           border-radius: 11px;
+           
+           max-height: 333px;
+           max-width: 333px;
+           
+           text-align: center;
+           
+           /*background-color: #eaf0ef;*/
+           background: linear-gradient(229deg, rgb(255 255 255) 0%, rgb(219 242 255) 60%, rgb(254, 255, 255) 100%);
+           box-shadow: 11px 11px 22px 3px rgba(0, 0, 0, 0.316);
+          }
+
+          .card-image{
+           height: 111px;
+           width: 111px;
+           
+           margin-top: 33px;
+           margin-bottom: 0px;
+           margin-right: 33px;
+           margin-left: 33px;
+           
+           outline: solid;
+           outline-offset: 1px;
+           border-radius: 33px;
+          }
+          
+          /* card button colors */
+          .card-edit {background-color: #add7e9;}
+          .card-delete {background-color: #c38585;}
+          .card-modal {background-color: #a3e7e7;}
+          
+          .card-modal-container{
+           display: none;
+           position: fixed;
+           z-index: 1;
+           
+           padding-top: 33px;
+           left: 0;
+           top: 0;
+           width: 100%;
+           height: 100%;
+           overflow: auto;
+           background-color: rgb(0,0,0);
+           background-color: rgba(0,0,0,0.4);
+          }
+
+          .modal-content{
+           background-color: #fefefe;
+           
+           margin-left: 33%;
+           
+           padding: 1%;
+           min-width: 333px;
+
+           width: 33%;
+           
+           border: 1px solid #888;
+          }
+
+          .modal-close{
+           float: right;
+           
+           font-size: 22px;
+           font-weight: bold;
+
+           color: #ffffff;
+           background-color: #afafaf;
+          }
+
+          .modal-image{
+           height: auto;
+           width: 333px;
+           
+           margin: auto;
+          }
+
+          .modal-close:hover,
+          .modal-close:focus{
+           color: #000;
+           text-decoration: none;
+           cursor: pointer;
+
+           color: #000000;
+           background-color: #5c5c5c;
+          }
+
+        </style>
+    </head>
+
+    <!--/////////////////////////////////////////////////////////////////////////////////////////////-->
+
+         <div class="upper-container">
+           
+           <form>
+             <button type="button" class="btn search-submit">Submit</button>
+             <input class="search-input" type="text" placeholder="Search Jobs...">
+             <button type="button" class="btn new-job-submit">Add New Job</button>
+           </form>
+         
+         </div>
+
+         <div class="lower-container">
+           
+           <!--card template-->
+           <div class="card-template">
+             <div class="column card-entity" style="display:none; text-align: center;" id="">
+               <img class="card-image" src="" alt="">
+               <div class="card-body">
+                 
+                 <h5><p class="card-title">Name</p></h5>
+                 
+                 <p><i><h7 class="card-property1">Property1</h7></i></p>
+                 
+                 <button type="button" class="btn card-edit">Edit</button>
+                  <button type="button" class="btn card-modal">View More</button>
+               
+                 <!-- Modal -->
+                 <div class="card-modal-container">
+                   <div class="modal-content">
+                     <div class="modal-close">Close window</div>
+                     <br>
+                     <img class="modal-image" src="" alt="">
+                     <b><p class="modal-company">Modal company...</p></b>
+                     <i><h3><p class="modal-title">Modal title text...</p></h3></i>
+                     <b><p class="modal-property1">Modal property1...</p></b>
+                     <p class="modal-property2">Modal property2..</p>
+                     <p class="modal-property3">Modal property3...</p>
+                   </div>
+                 </div>
+
+               </div>
+             </div>
+           </div>
+
+           <row class="row loaded-cards-container">
+           
+           </row>
+         </div>
+           
+         <br>
+         <br>
+         <br>
+
+        <!--/////////////////////////////////////////////////////////////////////////////////////////////-->
+
+        <script>
+
+          /////////////////////////////////Start Up/////////////////////////////////
+          
+          function startUp()
+          {
+           serviceJobsGetPaginated();
+
+           buttonHandler();
+          }
+
+          function buttonHandler()
+          {
+           $(".upper-container .search-submit").on("click", onClickJobsSearch);
+           $(".upper-container .new-job-submit").on("click", onClickJobsNew);
+
+           //Loaded card buttons
+           $(".loaded-cards-container").on("click", ".card-edit", onClickCardEdit);
+           //$(".loaded-cards-container").on("click", ".card-delete", onClickDeleteCard);
+           $(".loaded-cards-container").on("click", ".card-modal", onClickCardModal);
+          }
+
+          /////////////////////////////////Jobs Service/////////////////////////////////
+
+          //
+          function serviceJobsPostNew()
+          {
+           jobsService
+            .postNew()
+            .then()
+            .catch();
+          }
+
+          //
+          function serviceJobsGetPaginated()
+          {
+           jobsService
+            .getPaginated()
+            .then(parseCardData)
+            .catch((response) => console.warn(response));
+          }
+
+          //
+          function serviceJobsGetPaginatedSearch(searchTerm)
+          {
+           jobsService
+            .getPaginatedSearch(searchTerm)
+            .then(jobsSearchPaginatedResults)
+            .catch();
+          }
+
+          //
+          function serviceJobsPutById()
+          {
+           jobsService
+            .putById()
+            .then()
+            .catch();
+          }
+
+          /////////////////////////////////Card Functions/////////////////////////////////
+
+          function parseCardData(responseData)
+          {
+           renderCards(responseData.data.item.pagedItems);
+          }
+
+          function renderCards(cardData)
+          {
+           let i = 0, cardClone, id, len = cardData.length;
+           
+           for(; i < len; i++)
+           {
+            id = cardData[i].id;
+
+            cardClone = $(".card-template").clone();
+            cardClone.find(".card-entity").attr("style", "display:inline;");
+            cardClone.find(".card-entity").attr("id", `${id}`);
+            cardClone.find(".card-image").attr("src", cardData[i].techCompany.images[0].imageUrl);
+            cardClone.find(".card-title").text(cardData[i].title);
+            cardClone.find(".card-property1").text(cardData[i].summary);
+            
+            cardClone.find(".modal-image").attr("src", cardData[i].techCompany.images[0].imageUrl);
+            cardClone.find(".modal-company").text(cardData[i].techCompany.name);
+            cardClone.find(".modal-title").text(cardData[i].title);
+            cardClone.find(".modal-property1").text(cardData[i].pay);
+            cardClone.find(".modal-property2").text(cardData[i].summary);
+            cardClone.find(".modal-property3").text(cardData[i].description);
+
+            $(".loaded-cards-container").append(cardClone.html());
+           };
+          }
+          
+          function onClickCardEdit()
+          {
+           let id = $(this).closest(".card-entity").attr("id");
+           console.log("Edit Button card ID:", id);
+           location.replace(`../pages/jobs-submit.html?jobId=${id}`);
+          }
+
+          function onClickCardModal()
+          {
+           let id = $(this).closest(".card-entity").attr("id");
+           let modal = $(`.loaded-cards-container #${id} .card-modal-container`);
+           let modalClose = $(`.loaded-cards-container #${id} .modal-close`)[0];
+
+           modal.attr("style", "display: inline-block;");
+
+           window.addEventListener("click", (e) => { if(e.target == modalClose) modalClickClose(modal); else window.removeEventListener("click", modalClickClose); });
+          }
+          
+          function modalClickClose(modal)
+          {
+           modal.attr("style", "display: none;");
+           window.removeEventListener("click", modalClickClose);
+          }
+
+          /////////////////////////////////Search Function/////////////////////////////////
+          
+          function onClickJobsSearch()
+          {
+           let searchRes = $(".upper-container .search-input").val();
+           if(searchRes) serviceJobsGetPaginatedSearch(searchRes);
+          }
+
+          function jobsSearchPaginatedResults(data)
+          {
+           $(".loaded-cards-container").empty();
+           renderCards(data.data.item.pagedItems);
+          }
+ 
+          /////////////////////////////////Add New Job Function/////////////////////////////////
+
+          function onClickJobsNew()
+          {
+           location.replace("../pages/jobs-submit.html");
+          }
+          
+          ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+        </script>
+    </body>
+
+    </html>
