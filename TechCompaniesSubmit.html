@@ -1,0 +1,296 @@
+   <!DOCTYPE html>
+   <html lang="en">
+   <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="referrer" content="unsafe-url" />
+        <script src="https://unpkg.com/axios@0.19.2/dist/axios.min.js"></script>
+        
+        <script src="../techCompaniesService.js"></script>
+
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+
+        <!--/////////////////////////////////////////////////////////////////////////////////////////////-->
+        
+        <style>
+
+          .main-container{
+           margin-top: 22px;
+           margin-left: 28px;
+           display: flex;
+          }
+
+          .main-form{
+           margin-top: 0px;
+           margin-bottom: 22px;
+           margin-left: 0px;
+           margin-right: 22px;
+           
+           padding-top: 33px;
+           padding-bottom: 33px;
+           padding-left: 22px;
+           padding-right: 22px;
+           
+           outline: solid;
+           outline-offset: 0px;
+           border-radius: 11px;
+           
+           width: 500px;
+           
+           text-align: center;
+           
+           background-color: #c5e0e9;
+          }
+          
+          .form-inputs .input{
+           text-align: left;
+           width: 88%;
+          }
+
+          .form-inputs .form-group{
+           margin-bottom: 6px;
+          }
+
+          /* form button colors */
+          .form-submit-changes {background-color: #81c777;}
+          
+
+        </style>
+    </head>
+
+    <!--/////////////////////////////////////////////////////////////////////////////////////////////-->
+
+         <div class="main-container" id="">
+           
+           <!--//Main form//-->
+           <div class="main-form">
+             <h3><p>Job ID <div class="job-id">Loading...</div></p></h3>
+             <form>
+               <div class="form-inputs">
+
+                 <div class="form-group">
+                   <label>Title</label><br>
+                   <input type="text" class="input" id="form-input1">
+                 </div>
+
+                 <div class="form-group">
+                   <label>Summary</label><br>
+                   <input type="text" class="input" id="form-input2">
+                 </div>
+
+                 <div class="form-group">
+                   <label>Description</label><br>
+                   <input type="text" class="input" id="form-input3">
+                 </div>
+                 
+                 <div class="form-group">
+                   <label>Pay</label><br>
+                   <input type="text" class="input" id="form-input4">
+                 </div>
+
+                 <div class="form-group">
+                   <label>Slug</label><br>
+                   <input type="text" class="input" id="form-input5">
+                 </div>
+
+                 <div class="form-group">
+                   <label>StatusId</label><br>
+                   <select class="input" id="form-input6">
+                    <option value="Active">Active</option>
+                    <option value="Flagged">Flagged</option>
+                    <option value="Deleted">Deleted</option>
+                    <option value="NotSet">NotSet</option>
+                   </select>
+                 </div>
+                 
+                 <div class="form-group">
+                   <label>Tech Company Id</label><br>
+                   <select class="input" id="form-input7" value="">
+                   </select>
+                 </div>
+                 
+                 <div class="form-group">
+                   <label>Skills</label><br>
+                   <input type="text" class="input" id="form-input8">
+                 </div>
+
+               </div>
+             
+               <br>
+               <button type="button" class="btn form-submit-changes" style="display: inline;">Submit New Job</button>
+
+             </form>
+           </div>
+           
+         </div>
+         <!--//main container end//-->
+      
+
+        <!--/////////////////////////////////////////////////////////////////////////////////////////////-->
+
+        <script id="candidateCode">
+
+          toastr.options =
+          {
+          "closeButton": true,
+           "debug": false,
+           "newestOnTop": true,
+           "progressBar": false,
+           "positionClass": "toast-top-center",
+           "preventDuplicates": false,
+           "onclick": null,
+           "showDuration": "300",
+           "hideDuration": "1000",
+           "timeOut": "5000",
+           "extendedTimeOut": "1000",
+           "showEasing": "swing",
+           "hideEasing": "linear",
+           "showMethod": "fadeIn",
+           "hideMethod": "fadeOut"
+          }
+
+          /////////////////////////////////Start Up/////////////////////////////////
+
+          function startUp()
+          {
+           initiate();
+           buttonHandler();
+          }
+
+          function buttonHandler()
+          {
+           $(".main-form .form-submit-changes").on("click", onClickSubmitCompany);
+          }
+
+          /////////////////////////////////Axios Service/////////////////////////////////
+
+          //
+          function serviceCompanyGetById(id)
+          {
+           techCompaniesService
+            .getById(id)
+            .then(populateFormCompanies)
+            .then()
+            .catch();
+          }
+
+          //
+          function serviceCompanyPostNew(payload)
+          {
+           techCompaniesService
+            .postNew(payload)
+            .then(companyPostSuccess)
+            .catch(errorMessage);
+          }
+
+          //
+          function serviceCompanyPutById(payload)
+          {
+           techCompaniesService
+            .putById(payload)
+            .then(companyPutSuccess)
+            .catch(errorMessage);
+          }
+
+          /////////////////////////////////Form Functions/////////////////////////////////
+          
+          //Load form data based on id
+          function loadFormEntries()
+          {
+           let id = $(".main-form .job-id").text();
+           serviceCompanyGetById(id);
+          }
+
+          function populateFormCompanies(data)
+          {
+           data = data.data.item;
+
+           $(".form-inputs #form-input1").val(data.title);
+           $(".form-inputs #form-input2").val(data.summary);
+           $(".form-inputs #form-input3").val(data.description);
+           $(".form-inputs #form-input4").val(data.pay);
+           $(".form-inputs #form-input5").val(data.slug);
+           $(".form-inputs #form-input6").val(data.statusId);
+           $(".form-inputs #form-input7").val(data.techCompany.id);
+           $(".form-inputs #form-input8").val(data.skills[0].name);
+          }
+
+          function onClickSubmitCompany()
+          {
+           let payload = {};
+           let mode = $(".main-container").attr("id");
+
+           if(mode == "edit") payload.id = $(".main-form .job-id").text();
+           payload.title = $(".form-inputs #form-input1").val();
+           payload.description = $(".form-inputs #form-input3").val();
+           payload.summary = $(".form-inputs #form-input2").val();
+           payload.pay = $(".form-inputs #form-input4").val();
+           payload.slug = $(".form-inputs #form-input5").val();
+           payload.statusId = $(".form-inputs #form-input6").val();
+           payload.techCompanyId = $(".form-inputs #form-input7").val();
+           payload.skills = [$(".form-inputs #form-input8").val()];
+
+           if(mode == "create") serviceCompanyPostNew(payload);
+           if(mode == "edit") serviceCompanyPutById(payload);
+          }
+
+          function companyPostSuccess(data)
+          {
+           toastr.success("Job successfully created!", "Job Creation");
+           $(".main-form .job-id").text(data.data.item);
+           $(".main-container").attr("id", "edit");
+           $(".main-form .form-submit-changes").text("Submit Changes");
+          }
+
+          function companyPutSuccess()
+          {
+           toastr.success("Job successfully Updated!", "Job Update");
+          }
+
+          /////////////////////////////////Other Functions/////////////////////////////////
+
+          //Determine create or edit mode
+          function initiate()
+          {
+           modeSet();
+           loadFormData();
+          }
+
+          function modeSet()
+          {
+           let id = parseUrlId();
+           
+           if(id)
+             {
+              $(".main-form .job-id").text(id);
+              $(".main-container").attr("id", "edit");
+              $(".main-form .form-submit-changes").text("Submit Changes");
+             }
+             else 
+                {
+                 $(".main-form .job-id").text("(submit for ID...)");
+                 $(".main-container").attr("id", "create");
+                 $(".main-form .form-submit-changes").text("Submit NEW company");
+                }
+          }
+
+          function parseUrlId()
+          {
+           let id = location.href.split("?companyId=");
+           id = parseInt(id[id.length - 1]);
+
+           return id;
+          }
+
+          function errorMessage(response) {toastr.warning(`${response}. Check form inputs and try again.`, "ERROR")};
+
+          //function postUpdateRedirect()
+          //{
+          // location.replace("../Pages/jobs.html");
+          //}
+
+        </script>
+    </body>
+
+    </html>
