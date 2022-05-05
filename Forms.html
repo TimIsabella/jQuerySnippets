@@ -1,0 +1,569 @@
+   <!DOCTYPE html>
+   <html lang="en">
+   <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="referrer" content="unsafe-url" />
+        <script src="https://unpkg.com/axios@0.19.2/dist/axios.min.js"></script>
+        
+        <script src="../usersService.js"></script>
+        <script src="../entityService.js"></script>
+
+        <style>
+
+          .main-container{
+           display: flex;
+          }
+
+          .main-form{
+           margin-top: 22px;
+           margin-bottom: 22px;
+           margin-right: 22px;
+           margin-left: 22px;
+           
+           padding-top: 33px;
+           padding-bottom: 33px;
+           padding-left: 22px;
+           padding-right: 22px;
+           
+           width: 50%;
+           
+           outline: solid;
+           outline-offset: 0px;
+           border-radius: 11px;
+           
+           /*
+           border-style: outset;
+           border-width: 6px;
+           border-color: rgb(90, 236, 236);
+           border-radius: 11px;
+           
+           border-top-style: dotted;
+           border-right-style: solid;
+           border-bottom-style: dotted;
+           border-left-style: solid;
+
+           outline: double;
+           outline-offset: 1px;
+           */
+           
+           max-width: 500px;
+           min-width: 500px;
+           min-height: 400;
+           max-height: 400;
+           
+           text-align: center;
+           
+           background-color: #eaf0ef;
+          }
+          
+          .form-inputs{
+           text-align: center;
+          }
+          
+          /* form button colors */
+          .form-clear-records {background-color: #ffffff;}
+          .form-clear-fields {background-color: #ffffff;}
+          .form-render-all-records {background-color: #ffe7a4;}
+          .form-add-update {background-color: #81c777;}
+          
+          .column {
+           float: left;
+           width: 25%;
+           padding: 0 10px;
+          }
+          
+          .row:after {
+           content: "";
+           display: table;
+           clear: both;
+          }
+          
+          .loaded.cards{
+           flex-grow: 1;
+          }
+          
+          .card-entity{
+           margin-top: 22px;
+           margin-bottom: 22px;
+           margin-right: 22px;
+           margin-left: 22px;
+           
+           padding-top: 1px;
+           padding-bottom: 33px;
+           padding-left: 11px;
+           padding-right: 11px;
+           
+           outline: solid;
+           outline-offset: 0px;
+           border-radius: 11px;
+           
+           width: 333px;
+           min-width: 333px;
+           max-height: 400px;
+           
+           text-align: center;
+           
+           background-color: #eaf0ef;
+          }
+          
+          /*
+          .edit-mode-off{
+          }
+          */
+
+          .edit-mode-on{
+           box-shadow: 11px 11px 22px 3px rgba(0, 0, 0, 1.618);
+          }
+
+          .card-image{
+           height: 111px;
+           width: 111px;
+           
+           margin-top: 33px;
+           margin-bottom: 0px;
+           margin-right: 33px;
+           margin-left: 33px;
+          }
+          
+          /* card button colors */
+          .card-edit-record {background-color: #a8a8a8;}
+          .card-delete-record {background-color: #c50d00;}
+
+        </style>
+    </head>
+
+    <!--/////////////////////////////////////////////-->
+
+    <body class="sabio" data-ins="pw-00">
+        <!-- Do Not Edit or Remove this nav element -->
+        <nav class="do-not-remove navbar navbar-expand-md navbar-dark bg-dark sabio"></nav>
+
+         <div class="main-container">
+           
+           <!--//Main form//-->
+           <div class="main-form">
+             <form>
+               <h1><p class="main-form-title">Recipes</h1></p>
+               <h4><p class="main-form-text">Recipe Editor</p></h4>
+               
+               <div class="form-inputs">
+               
+                 <div class="form-group" id="form-group1">
+                   <label>Recipe Name</label><br>
+                   <input type="text" id="form-input1">
+                 </div>
+                 
+                 <div class="form-group" id="form-group2">
+                   <label>Meat</label><br>
+                   <input type="text" id="form-input2">
+                 </div>
+
+                 <div class="form-group" id="form-group3">
+                   <label>Dairy</label><br>
+                   <input type="text" id="form-input3">
+                 </div>
+
+                 <div class="form-group" id="form-group4">
+                   <label>Starch</label><br>
+                   <input type="text" id="form-input4">
+                 </div>
+
+                 <div class="form-group" id="form-group5">
+                   <label>Vegetable</label><br>
+                   <input type="text" id="form-input5">
+                 </div>
+
+                 <div class="form-group" id="form-group6">
+                   <br>
+                   <label>Image URL</label><br>
+                   <input type="text" id="form-input6">
+                 </div>
+                 
+               </div>
+             
+               <br>
+               <button type="button" class="btn form-clear-fields" style="display: inline;">Clear Fields</button>
+               <button type="button" class="btn form-clear-records" style="display: inline;">Clear Records</button>
+               <button type="button" class="btn form-add-update" id="add" style="display: inline;">Add New Record</button>
+               <br><br>
+               <button type="button" class="btn form-render-all-records" style="display: inline;">Render All Records</button>
+             
+             </form>
+           </div>
+           
+           <!--//card template//-->
+           <div class="card-template">
+             <div class="column card-entity edit-mode-off" style="display:none;" id="">
+               <img class="card-image" src="" alt="">
+               <div class="card-body">
+                 <h5><p class="card-title">Selected</p></h5>
+                 <ul style="text-align: left;">
+                   <li>Meat: <i><h7 class="card-property1">Property1</i></li></h7>
+                   <li>Dairy: <i><h7 class="card-property2">Property2</i></li></h7>
+                   <li>Starch: <i><h7 class="card-property3">Property3</i></li></h7>
+                   <li>Vegetable: <i><h7 class="card-property4">Property4</i></li></h7>
+                 </ul>
+                 <button type="button" class="btn card-edit-record">Edit</button>
+                 <button type="button" class="btn card-delete-record" style="display:none;">Delete</button>
+               </div>
+             </div>
+           </div>
+             
+           <!--//loaded cards container//-->
+           <row class="row loaded-cards">
+           
+           </row>
+         </div>
+         <!--//main container end//-->
+          
+         <div class="card-id-holder" id=""></div>
+           
+         <br>
+         <br>
+         <br>
+
+        <!--/////////////////////////////////////////////-->
+
+        <script>
+    
+          ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+          //////////User Input//////////
+
+          //User login payload
+          var userNamePay = {
+           "email": "JohnSmith@example.com",
+           "password": "123456789ABCabc!!",
+           "tenantId": "bootcamp11111111111"
+          };
+
+          //Entity name
+          var entityName = "Recipes";
+
+          /////////////////////////////////Start Up/////////////////////////////////
+
+          function startUp()
+          {
+           userLogin(userNamePay);
+           buttonHandler();
+          }
+
+          function buttonHandler()
+          {
+           //Form buttons
+           $(".form-clear-records").on("click", onClickClearAllCards);
+           $(".form-clear-fields").on("click", onClickClearAllFields);
+           $(".form-render-all-records").on("click", entityGetAll);
+           $(".form-add-update").on("click", onClickAddUpdateButton);
+
+           //Loaded card buttons
+           $(".loaded-cards").on("click", ".card-delete-record", onClickDeleteCard);
+           $(".loaded-cards").on("click", ".card-edit-record", onClickCardEdit);
+          }
+
+          /////////////////////////////////Entity Service/////////////////////////////////
+
+          //USER login
+          function userLogin(userData)
+          {
+           usersService
+            .login(userData);
+          }
+
+          ///////////
+
+          //GET all entity records
+          function entityGetAll()
+          {
+           entityService
+            .getAll()
+            .then(getAllSuccess);
+          }
+
+          function getAllSuccess(response) {renderAllCards(response)};
+
+          //POST new entity record
+          function entityPostRecord(postData)
+          {
+           entityService
+            .postRecord(postData)
+            .then(addCardSuccess);
+          }
+
+          function addCardSuccess(response) {addCard(response)};
+
+          //PUT entity record
+          function entityPutRecord(putData)
+          {
+           entityService
+            .putRecord(putData)
+            .then(putCardSuccess);
+          }
+
+          function putCardSuccess(response) {cardPutUpdate(response)};
+
+          //DELETE entity record
+          function entityDeleteRecord(id)
+          {
+           entityService
+            .deleteRecord(id)
+            .then(removeCard(id));
+          }
+
+          /////////////////////////////////Form functions/////////////////////////////////
+
+          //Clear all form fields
+          function onClickClearAllFields()
+          {
+           $("#form-input1").val("");
+           $("#form-input2").val("");
+           $("#form-input3").val("");
+           $("#form-input4").val("");
+           $("#form-input5").val("");
+           $("#form-input6").val("");
+          }
+
+          //Remove all cards from DOM
+          function onClickClearAllCards()
+          {
+           editModeOff();
+           $(".loaded-cards").empty();
+          }
+
+          //Get form properties and add card record
+          function onClickAddCard()
+          {
+           result = readFormProperties();
+           entityPostRecord(result);
+          }
+
+          function onClickAddUpdateButton()
+          {
+           buttonId = $(this).attr("id");
+
+           if(buttonId == "add") onClickAddCard();
+           if(buttonId == "update") onClickUpdateCard();
+          }
+
+          //Get id from response, get template, apply response data, add card to DOM
+          function addCard(data)
+          {
+           let cardClone;
+           let id = parseInt(data.data.item);
+           let formData = JSON.parse(data.config.data);
+
+           cardClone = $(".card-template").clone();
+           cardClone.find(".column").attr("id", `${id}`);
+           cardClone.find(".column").attr("style", "display:inline;");
+
+           cardClone.find(".card-title").text(formData.title);
+           cardClone.find(".card-property1").text(formData.prop1);
+           cardClone.find(".card-property2").text(formData.prop2);
+           cardClone.find(".card-property3").text(formData.prop3);
+           cardClone.find(".card-property4").text(formData.prop4);
+           cardClone.find(".card-image").attr("src", formData.imgUrl);
+
+           $(".loaded-cards").prepend(cardClone.html());
+          }
+
+          //Get form properties
+          function readFormProperties()
+          {
+           let result = {};
+
+           result.title = $("#form-input1").val();
+           result.prop1 = $("#form-input2").val();
+           result.prop2 = $("#form-input3").val();
+           result.prop3 = $("#form-input4").val();
+           result.prop4 = $("#form-input5").val();
+           result.imgUrl = $("#form-input6").val();
+
+           return result;
+          }
+
+          //Clear cards from DOM, edit mode off, get template, apply properties and loop to add all cards to DOM
+          function renderAllCards(data)
+          {
+           let item = data.data.items, len = item.length;
+           onClickClearAllCards();
+           editModeOff(0);
+
+           for(let i = 0; i < len; i++)
+           {
+            let cardClone;
+            let id = parseInt(item[i].id);
+
+            cardClone = $(".card-template").clone();
+            cardClone.find(".card-entity").attr("id", `${id}`);
+            cardClone.find(".card-entity").attr("style", "display:inline;");
+
+            cardClone.find(".card-title").text(item[i].title);
+            cardClone.find(".card-property1").text(item[i].prop1);
+            cardClone.find(".card-property2").text(item[i].prop2);
+            cardClone.find(".card-property3").text(item[i].prop3);
+            cardClone.find(".card-property4").text(item[i].prop4);
+            cardClone.find(".card-image").attr("src", item[i].imgUrl);
+
+            cardClone.find(".card-entity").addClass("edit-mode-off");
+
+            $(".loaded-cards").append(cardClone.html());
+           };
+          };
+
+          //Combine id and form properties for result, Put record by result
+          function onClickUpdateCard()
+          {
+           let id, result = [[], {}];
+           id = parseInt($(".card-id-holder").attr("id"));
+
+           result[0] = id;
+           result[1] = readFormProperties();
+
+           entityPutRecord(result);
+          }
+
+          /////////////////////////////////Card functions/////////////////////////////////
+
+          //Set edit selected card id to DOM, set form values from selected card, change card delete button visibility
+          function onClickCardEdit()
+          {
+           let id, cardClone;
+
+           id = parseInt($(".card-id-holder").attr("id"));
+           editModeOff(id);
+
+           id = parseInt($(this).parent().parent().attr("id"));
+           $(".card-id-holder").attr("id", id); //set edit selected card id to DOM
+           editModeOn(id);
+
+           cardClone = $(this).parent().parent().clone();
+           $("#form-input1").val(cardClone.find(".card-title").text());
+           $("#form-input2").val(cardClone.find(".card-property1").text());
+           $("#form-input3").val(cardClone.find(".card-property2").text());
+           $("#form-input4").val(cardClone.find(".card-property3").text());
+           $("#form-input5").val(cardClone.find(".card-property4").text());
+           $("#form-input6").val(cardClone.find(".card-image").attr("src"));
+
+           cardClone.find(".card-entity").removeClass("edit-mode-off");
+           cardClone.find(".card-entity").addClass("edit-mode-on");
+
+           $(`.loaded-cards #${id} .card-delete-record`).attr("style", "display:inline;");
+           $(".main-form .form-add-update").attr("style", "display:inline;");
+          }
+
+          //Delete card record, edit mode off
+          function onClickDeleteCard()
+          {
+           let id = $(this).parent().parent().attr("id");
+
+           entityDeleteRecord(id);
+           editModeOff(id);
+          }
+
+          //Remove card from DOM
+          function removeCard(id)
+          {
+           $(`.loaded-cards #${id}`).remove();
+          }
+
+          //Update edited card following Put
+          function cardPutUpdate(data)
+          {
+           let id, item;
+           id = parseInt($(".card-id-holder").attr("id"));
+           let formData = JSON.parse(data.config.data);
+
+           $(`.loaded-cards #${id} .card-title`).text(formData.title);
+           $(`.loaded-cards #${id} .card-property1`).text(formData.prop1);
+           $(`.loaded-cards #${id} .card-property2`).text(formData.prop2);
+           $(`.loaded-cards #${id} .card-property3`).text(formData.prop3);
+           $(`.loaded-cards #${id} .card-property4`).text(formData.prop4);
+           $(`.loaded-cards #${id} .card-image`).attr("src", formData.imgUrl);
+
+           editModeOff(id);
+          }
+
+          /////////////////////////////////Other functions/////////////////////////////////
+          function editModeOn(id)
+          {
+           $(`.loaded-cards #${id} .card-delete-record`).attr("style", "display:none;");
+
+           $(`.loaded-cards #${id}`).removeClass("edit-mode-off");
+           $(`.loaded-cards #${id}`).addClass("edit-mode-on");
+
+           $(".form-add-update").text("Update Record");
+           $(".form-add-update").attr("id", "update");
+           $(".form-add-update").css("background-color", "#00c3b9");
+          }
+
+          function editModeOff(id)
+          {
+           $(`.loaded-cards #${id} .card-delete-record`).attr("style", "display:none;");
+
+           $(`.loaded-cards #${id}`).removeClass("edit-mode-on");
+           $(`.loaded-cards #${id}`).addClass("edit-mode-off");
+
+           $(".form-add-update").text("Add New Record");
+           $(".form-add-update").attr("id", "add");
+           $(".form-add-update").css("background-color", "#81c777");
+          }
+
+          ///////////////////////////////////////////////////////////////////////////////////////////////////
+          
+          //[
+          //  {
+          //   "title": "Salad",
+          //   "prop1": "Optional",
+          //   "prop2": "Optional",
+          //   "prop3": "Optional",
+          //   "prop4": "Lettuce, Variety",
+          //   "imgUrl": "https://cdn.loveandlemons.com/wp-content/uploads/2021/04/green-salad.jpg"
+          //  },
+          //  {
+          //   "title": "Grilled Cheese",
+          //   "prop1": "Optional",
+          //   "prop2": "Cheese",
+          //   "prop3": "Toast",
+          //   "prop4": "Optional",
+          //   "imgUrl": "https://static01.nyt.com/images/2021/02/17/dining/17tootired-grilled-cheese/17tootired-grilled-cheese-articleLarge.jpg?quality=75&auto=webp&disable=upscale"
+          //  },
+          //  {
+          //   "title": "Pizza",
+          //   "prop1": "Optional",
+          //   "prop2": "Cheese",
+          //   "prop3": "Dough",
+          //   "prop4": "Variety",
+          //   "imgUrl": "https://goldbelly.imgix.net/uploads/showcase_media_asset/image/132996/build-your-own-classic-vegetarian-pizza-3-pack.b9f68670f96ab001a53770be7d0bca73.jpg?ixlib=react-9.0.2&auto=format&ar=1%3A1&w=1946"
+          //  },
+          //  {
+          //   "title": "Bacon & Eggs",
+          //   "prop1": "Bacon, Eggs",
+          //   "prop2": "None",
+          //   "prop3": "Optional toast",
+          //   "prop4": "None",
+          //   "imgUrl": "https://4.bp.blogspot.com/-u_ivg773dtc/V3MXPs7xUjI/AAAAAAAALh4/XB3jSfO5_a8V_yUKFLBkmDIOSOJ5pPv_ACKgB/s640/Bacon-and-Eggs_IMG_0822.JPG"
+          //  },
+          //  {
+          //   "title": "Meatloaf",
+          //   "prop1": "Beef",
+          //   "prop2": "Optional",
+          //   "prop3": "Bread crumbs",
+          //   "prop4": "Optional",
+          //   "imgUrl": "https://www.spendwithpennies.com/wp-content/uploads/2019/05/New-The-BEST-Meatloaf-7.jpg"
+          //  },
+          //  {
+          //   "title": "Hamburger",
+          //   "prop1": "Beef",
+          //   "prop2": "Optional",
+          //   "prop3": "Bread bun",
+          //   "prop4": "Lettuce, Tomato",
+          //   "imgUrl": "https://assets.epicurious.com/photos/57c5c6d9cf9e9ad43de2d96e/master/pass/the-ultimate-hamburger.jpg"
+          //  }
+          // ]
+           
+        
+        </script>
+    </body>
+
+    </html>
