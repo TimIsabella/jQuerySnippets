@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+ <meta charset="utf-8" />
+ <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+ <meta name="referrer" content="unsafe-url" />
+ <script src="https://unpkg.com/axios@0.19.2/dist/axios.min.js"></script>
+
+ <script src="../usersService.js"></script>
+
+ <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet" />
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+
+ <style>
+
+ .main-container{
+  font-family: "verdana";
+ }
+
+ .navbar-boot-override{
+  display: block;
+  flex-wrap: wrap;
+  position: fixed;
+  
+  width: 100%;
+  height: auto;
+  
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+
+  color: rgb(0, 0, 0);
+
+  background: linear-gradient(90deg, rgb(115, 195, 211) 0%, rgb(115, 195, 211) 60%, rgb(254, 255, 255) 100%);
+  min-height: 55px;
+ }
+
+ .navbar-brand{
+  color: rgb(255, 255, 255);
+ }
+
+ #active-link{
+  color: rgb(255, 255, 255);
+  background-color: rgb(0, 0, 0);
+  border-radius: 6px;
+ }
+
+ #active-link:hover{
+  color: rgb(0, 0, 0);
+  background-color: rgb(255, 255, 255);
+  border-radius: 6px;
+ }
+
+ .nav-link{
+  color: rgb(0, 0, 0);
+  border-radius: 6px;
+ }
+
+ .nav-link:hover{
+  color: rgb(0, 0, 0);
+  background-color: rgb(255, 255, 255);
+  border-radius: 6px;
+ }
+
+ /* /////////// */
+
+ .main-container-iframe{
+  margin-top: 60px;
+  padding: 0px;
+  
+  width: 100%;
+  height: 922px;
+
+  overflow: clip;
+
+  font-family: "verdana";
+  border: none;
+ }
+
+ </style>
+</head>
+
+   <div class="main-container">
+    <nav class="navbar-boot-override navbar-expand-xxl">
+      <div class="navbar-collapse">
+       <div class="navbar-brand">&nbsp; Company Inc.</div>
+
+       &nbsp;&nbsp;&nbsp;
+
+       <!-- Nav Menu Account Drop-down -->
+       <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+         <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false"></a>
+
+         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <li><a class="dropdown-item" id="register" href="#">Register</a></li>
+
+          <li>
+           <hr class="dropdown-divider">
+          </li>
+
+          <li><a class="dropdown-item" id="logout" href="#">Logout</a></li>
+
+          <li><a class="dropdown-item" id="login" href="#">Login</a></li>
+
+         </ul>
+        </li>
+       </ul>
+       <!-- End Nav Menu Account Drop-down -->
+
+       &nbsp;&nbsp;&nbsp;
+
+       <!-- Nav Menu Links -->
+       <div class="navbar-collapse">
+        <ul class="navbar-nav navbar-buttons">
+
+         <li class="nav-item">
+          <a class="nav-link home" id="active-link" href="#">Home</a>
+         </li>
+
+         <li class="nav-item">
+          <a class="nav-link friends" id="" href="#">Friends</a>
+         </li>
+
+         <li class="nav-item">
+          <a class="nav-link blogs" id="" href="#">Blogs</a>
+         </li>
+
+         <li class="nav-item">
+          <a class="nav-link tech-companies" id="" href="#">Tech Companies</a>
+         </li>
+
+         <li class="nav-item">
+          <a class="nav-link jobs" id="" href="#">Jobs</a>
+         </li>
+
+         <li class="nav-item">
+          <a class="nav-link events" id="" href="#">Events</a>
+         </li>
+
+        </ul>
+       </div>
+       <!-- End Nav Menu Links -->
+
+      </div>
+    </nav>
+    
+    <div>
+      <iframe class="main-container-iframe" src=""></iframe>
+    </div>
+   
+   </div>
+ 
+ <!--/////////////////////////////////////////////-->
+
+ <script id="candidateCode">
+
+  ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+  toastr.options =
+  {
+  "closeButton": true,
+   "debug": false,
+   "newestOnTop": true,
+   "progressBar": false,
+   "positionClass": "toast-top-center",
+   "preventDuplicates": false,
+   "onclick": null,
+   "showDuration": "300",
+   "hideDuration": "1000",
+   "timeOut": "5000",
+   "extendedTimeOut": "1000",
+   "showEasing": "swing",
+   "hideEasing": "linear",
+   "showMethod": "fadeIn",
+   "hideMethod": "fadeOut"
+  }
+
+  //User login payload
+  var userNamePay = {
+   "email": "JohnSmith@example.com",
+   "password": "123456789ABCabc!!",
+   "tenantId": "bootcamp11111111111"
+  };
+
+  /////////////////////////////////Start Up/////////////////////////////////
+
+  function startUp()
+  {
+   linkHandler();
+   getCurrentUserForNavBar();
+  }
+
+  function linkHandler()
+  {
+   $(".dropdown-menu #register").on("click", userAccountRegister);
+   $(".dropdown-menu #logout").on("click", logoutCurrentUser);
+   $(".dropdown-menu #login").on("click", userAccountLogin);
+
+   $(".navbar-buttons .home").on("click", linkHome);
+   $(".navbar-buttons .friends").on("click", linkFriends);
+   $(".navbar-buttons .blogs").on("click", linkBlogs);
+   $(".navbar-buttons .tech-companies").on("click", linkTechCompanies);
+   $(".navbar-buttons .jobs").on("click", linkJobs);
+   $(".navbar-buttons .events").on("click", linkEvents);
+  }
+
+  /////////////////////////////////Entity Service/////////////////////////////////
+
+  //GET current user account id
+  function getCurrentUserForNavBar()
+  {
+   usersService
+    .getUserCurrent()
+    .then((response) => {if(response.data.item.id) getCurrentUserEmailById(response.data.item.id)})
+    .catch(userAccountNone);
+  }
+
+  //GET current user account email by id
+  function getCurrentUserEmailById(id)
+  {
+   usersService.getUserById(id)
+   .then(userAccountCurrent)
+   .catch();
+  }
+
+  //GET current user account logout
+  function logoutCurrentUser()
+  {
+   usersService.getUserLogout()
+   .then(userAccountLoggedOut)
+   .catch();
+  }
+
+  /////////////////////////////////User functions/////////////////////////////////
+
+  function userAccountCurrent(data)
+  {
+   $(".navbar-nav .dropdown-toggle").text(data.data.item.email);
+   $(".dropdown .dropdown-divider").remove();
+   $(".dropdown #register").remove();
+   $(".dropdown #login").remove();
+
+   toastr.success(`Welcome ${data.data.item.firstName} ${data.data.item.lastName}!`, "Company Inc.");
+  }
+
+  function userAccountNone()
+  {
+   $(".navbar-nav .dropdown-toggle").text("Unregistered User");
+   $(".dropdown #logout").remove();
+  }
+
+  function userAccountRegister()
+  {
+   toastr.info("Navigating to register page...", "Account");
+   setTimeout(() => location.replace("../Register Page/Register Page2.html"), 3000);
+  }
+
+  function userAccountLogin()
+  {
+   location.replace("../Login Page/Login Page.html");
+  }
+
+  function userAccountLoggedOut()
+  {
+   toastr.warning("You have been logged out...", "Login");
+   setTimeout(() => location.replace("../Login Page/Login Page.html"), 3000);
+  }
+
+  //Execute after page load
+  window.addEventListener
+   ("load", () => 
+    {
+     $(".main-container-iframe").contents().find(".do-not-remove").remove();
+    }
+   );
+
+  //debugForms();
+
+  /////////////////////////////////Link Functions/////////////////////////////////
+  
+  function linkHome()
+  {
+   $(".main-container-iframe").attr("src", "../pages/home.html");
+   changeActiveSelection("home");
+  }
+
+  function linkFriends()
+  {
+   $(".main-container-iframe").attr("src", "../pages/friends.html");
+   changeActiveSelection("friends");
+  }
+
+  function linkBlogs()
+  {
+   $(".main-container-iframe").attr("src", "../pages/blogs.html");
+   changeActiveSelection("blogs");
+  }
+
+  function linkTechCompanies()
+  {
+   $(".main-container-iframe").attr("src", "../pages/tech-companies.html");
+   changeActiveSelection("tech-companies");
+  }
+
+  function linkJobs()
+  {
+   $(".main-container-iframe").attr("src", "../pages/jobs.html");
+   changeActiveSelection("jobs");
+  }
+
+  function linkEvents()
+  {
+   $(".main-container-iframe").attr("src", "../pages/events.html");
+   changeActiveSelection("events");
+  }
+  
+  function changeActiveSelection(name)
+  {
+   $(".navbar-buttons #active-link").attr("id", "");
+   $(`.navbar-buttons .${name}`).attr("id", "active-link");
+  }
+
+ </script>
+</body>
+
+</html>
