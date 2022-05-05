@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+ <meta charset="utf-8" />
+ <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+ <meta name="referrer" content="unsafe-url" />
+ <script src="https://unpkg.com/axios@0.19.2/dist/axios.min.js"></script>
+
+ <script src="../usersService.js"></script>
+
+ <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet" />
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+
+ <style>
+  .group-title {
+   text-align: center;
+
+   margin-top: 33px;
+   margin-bottom: 33px;
+   margin-right: 33px;
+   margin-left: 33px;
+  }
+
+  .form-row {
+   display: flex;
+
+   margin-top: auto;
+   margin-right: auto;
+   margin-bottom: auto;
+   margin-left: auto;
+
+   width: 88%;
+   min-height: 200px;
+  }
+
+  .form-column1 {
+   display: flex;
+   justify-content: right;
+
+   margin-right: 11px;
+   margin-left: 11px;
+
+   width: 50%;
+   min-height: 200px;
+
+   border-radius: 11px;
+
+   box-shadow: 11px 11px 22px 3px rgba(0, 0, 0, 1.618);
+   background: linear-gradient(90deg, rgba(2, 0, 36, 1) 0%, rgba(238, 255, 255, 1) 0%, rgba(139, 234, 254, 1) 100%);
+  }
+
+  .form-column2 {
+   display: flex;
+   justify-content: left;
+
+   margin-right: 11px;
+   margin-left: 11px;
+
+   width: 50%;
+   min-height: 200px;
+
+   border-radius: 11px;
+
+   box-shadow: 11px 11px 22px 3px rgba(0, 0, 0, 1.618);
+   background: linear-gradient(90deg, rgba(2, 0, 36, 1) 0%, rgba(139, 234, 254, 1) 0%, rgba(238, 255, 255, 1) 100%);
+  }
+
+  .form-input-user,
+  .form-input-details {
+   margin-top: 22px;
+   margin-bottom: 22px;
+   margin-right: 22px;
+   margin-left: 22px;
+
+   padding-top: 33px;
+   padding-bottom: 33px;
+   padding-left: 22px;
+   padding-right: 22px;
+
+   min-width: 333px;
+
+   outline: solid;
+   outline-offset: 0px;
+   border-radius: 11px;
+
+   text-align: center;
+
+   background-color: rgb(212, 251, 255);
+  }
+
+  .group-input {
+   margin-top: 1px;
+   margin-bottom: 11px;
+   margin-right: 22px;
+   margin-left: 22px;
+
+   box-shadow: 11px 11px 22px 3px rgba(0, 0, 0, 0.155);
+  }
+
+  .group-details {
+   margin-top: 88px;
+  }
+
+  .user-avatar {
+   height: 111px;
+   width: 111px;
+
+   margin-top: 1px;
+   margin-bottom: 11px;
+   margin-right: 33px;
+   margin-left: 33px;
+  }
+
+  .group-buttons {
+   display: flex;
+   justify-content: center;
+
+   margin-top: 33px;
+   margin-bottom: 33px;
+   margin-right: 33px;
+   margin-left: 33px;
+  }
+
+  .form-clear-fields {
+   background-color: #d3f6ff;
+   box-shadow: 11px 11px 22px 3px rgba(0, 0, 0, 0.316);
+  }
+
+  .form-create-account {
+   background-color: #77b4c7;
+   box-shadow: 11px 11px 22px 3px rgba(0, 0, 0, 0.316);
+  }
+
+ </style>
+</head>
+
+<!--/////////////////////////////////////////////-->
+
+ <!--//Main form container//-->
+ <div class="main-container">
+
+  <div class="group-title">
+   <h1>
+    <p class="main-form-title">Company Inc.
+   </h1>
+   </p>
+   <h4>
+    <p class="main-form-text">New Account Registration</p>
+   </h4>
+  </div>
+
+  <row class="form-row">
+
+   <div class="form-column1">
+    <form class="form-input-user">
+
+     <div class="group-user">
+      <label>Email Address</label><br>
+      <input class="group-input" type="text" name="email" id="form-input1" placeholder="name@domain.com">
+      <br>
+     </div>
+
+     <div class="group-user">
+      <label>First Name</label><br>
+      <input class="group-input" type="text" id="form-input2" placeholder="First name">
+      <br>
+     </div>
+
+     <div class="group-user">
+      <label>Last Name</label><br>
+      <input class="group-input" type="text" id="form-input3" placeholder="Last name">
+      <br>
+     </div>
+
+     <div class="group-user">
+      <label>Password</label><br>
+      <input class="group-input" type="password" id="form-input4" id="pwd" placeholder="Password">
+      <br>
+     </div>
+
+     <div class="group-user">
+      <label>Password Confirmation</label><br>
+      <input class="group-input" type="password" id="form-input5" id="pwd" placeholder="Password">
+     </div>
+
+    </form>
+   </div>
+
+   <div class="form-column2">
+    <form class="form-input-details">
+
+     <div class="group-details">
+      <img class="user-avatar" src="" alt="">
+      <br>
+      <label>Avatar Image</label><br>
+      <input class="group-input" type="url" id="form-input6" placeholder="URL of avatar image">
+      <script>$("#form-input6").change(() => $(".user-avatar").attr("src", $("#form-input6").val()));</script>
+
+      <br>
+     </div>
+
+    </form>
+   </div>
+
+  </row>
+
+  <div class="group-buttons">
+   <br><br>
+   <button type="button" class="btn form-clear-fields" style="display: inline;" onclick="this.blur();">Clear All
+    Fields</button>
+   <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+   <button type="button" class="btn form-create-account" style="display: inline;">Create Account</button>
+  </div>
+
+  <p style="text-align:center"><a href="../Login Page/Login Page.html">Return to Login Screen...</a></p>
+
+ </div>
+ <!--//Main form container//-->
+
+<!--/////////////////////////////////////////////-->
+
+ <script>
+
+  ///////////////////////////////////////////////////////////////////////////////////////////////////
+  
+  toastr.options =
+  {
+  "closeButton": true,
+   "debug": false,
+   "newestOnTop": true,
+   "progressBar": false,
+   "positionClass": "toast-top-center",
+   "preventDuplicates": false,
+   "onclick": null,
+   "showDuration": "300",
+   "hideDuration": "1000",
+   "timeOut": "5000",
+   "extendedTimeOut": "1000",
+   "showEasing": "swing",
+   "hideEasing": "linear",
+   "showMethod": "fadeIn",
+   "hideMethod": "fadeOut"
+  }
+
+  //User login payload
+  var userNamePay = {
+   "email": "JohnSmith@example.com",
+   "password": "123456789ABCabc!!",
+   "tenantId": "bootcamp11111111111"
+  };
+
+  /////////////////////////////////Start Up/////////////////////////////////
+
+  function startUp()
+  {
+   buttonHandler();
+  }
+
+  function buttonHandler()
+  {
+   //Form buttons
+   $(".form-clear-fields").on("click", onClickClearAllFields);
+   $(".form-create-account").on("click", onClickCreateAccount);
+  }
+
+  /////////////////////////////////Entity Service/////////////////////////////////
+
+  //POST new user account
+  function postUserAccountCreate(accountData)
+  {
+   usersService
+    .postNewUser(accountData)
+    .then(postAccountRecordSuccess)
+    .catch(postAccountRecordError);
+  }
+  
+  //POST user login
+  function postUserAcountLogin(accountData)
+  {
+   usersService
+    .postUserLogin(accountData)
+    .then()
+    .catch();
+  }
+
+  /////////////////////////////////Form functions/////////////////////////////////
+
+  //Clear all form fields
+  function onClickClearAllFields()
+  {
+   $("#form-input1").val("");
+   $("#form-input2").val("");
+   $("#form-input3").val("");
+   $("#form-input4").val("");
+   $("#form-input5").val("");
+   $("#form-input6").val("");
+   $("#form-input7").val("");
+  }
+
+  function onClickCreateAccount()
+  {
+   let data = getFormData();
+   checkFormData(data);
+  }
+
+  function getFormData()
+  {
+   let data = {};
+
+   data.firstName = $("#form-input2").val();
+   data.lastName = $("#form-input3").val();
+   data.email = $("#form-input1").val();
+   data.password = $("#form-input4").val();
+   data.passwordConfirm = $("#form-input5").val();
+   data.avatarUrl = $("#form-input6").val();
+
+   return data;
+  }
+
+  function checkFormData(data)
+  {
+   if(!data.email) toastr.info("Email address cannot be blank.", "Email");
+   else if(!data.firstName) toastr.info("First name cannot be blank.", "First name");
+   else if(!data.lastName) toastr.info("Last name cannot be blank.", "Last name");
+   else if(!data.password || !data.passwordConfirm) toastr.warning("Password block cannot be blank.", "Password");
+   else if(data.password != data.passwordConfirm) toastr.error("Passwords do not match!", "Password");
+   else if(!data.avatarUrl) toastr.info("Avatar image URL cannot be blank.", "Avatar URL");
+
+   else newAccount(data);
+  }
+
+  function postAccountRecordSuccess()
+  {
+   let accountData = {}, data = getFormData();
+   
+   accountData.email = data.email;
+   accountData.password = data.password;
+   accountData.tenantId = userNamePay.tenantId;
+
+   postUserAcountLogin(accountData);
+   
+   toastr.success("Your account has been created", "Account creation SUCCESSFULL");
+   setTimeout(() => location.replace("../Login Page/Login Page.html"), 3000);
+  }
+
+  function postAccountRecordError(data)
+  {
+   toastr.error(`Check inputs and try again. "${data}"`, "Account creation FAILED");
+  }
+
+  function newAccount(data)
+  {
+   data.tenantId = userNamePay.tenantId;
+   postUserAccountCreate(data);
+  }
+
+ //debugForms();
+
+ </script>
+</body>
+
+</html>
